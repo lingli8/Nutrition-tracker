@@ -10,7 +10,7 @@ AI-powered cycle-aware nutrition tracking system based on Stacy Sims research wi
 - Smart Meal Planning: Automated weekly meal plans with shopping lists
 - Gamification System: Achievements, streaks, levels, community engagement
 - PWA Support: Offline functionality and mobile-first design
-- Production Ready: Vercel deployment with Neon/PlanetScale database
+- Production Ready: Vercel deployment with Neon/PlanetScale database 
 
 ## Why This Project
 
