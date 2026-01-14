@@ -1,0 +1,72 @@
+# Render.com deployment configuration
+services:
+  # Backend API Service
+  - type: web
+    name: nutrition-tracker-api
+    env: java
+    plan: free
+    buildCommand: cd "nutrition tracker" && mvn clean package -DskipTests
+    startCommand: java -jar target/tracker-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod
+    healthCheckPath: /actuator/health
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: nutrition-tracker-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: nutrition-tracker-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: nutrition-tracker-db
+          property: password
+      - key: SPRING_DATA_REDIS_HOST
+        fromService:
+          type: redis
+          name: nutrition-tracker-redis
+          property: host
+      - key: SPRING_DATA_REDIS_PORT
+        fromService:
+          type: redis
+          name: nutrition-tracker-redis
+          property: port
+      - key: JWT_SECRET
+        generateValue: true
+        sync: false
+      - key: JWT_EXPIRATION
+        value: 86400000
+      - key: USDA_API_KEY
+        sync: false
+
+  # Frontend Service  
+  - type: web
+    name: nutrition-tracker-frontend
+    env: static
+    plan: free
+    buildCommand: cd nutrition-tracker-frontend && npm install && npm run build
+    staticPublishPath: nutrition-tracker-frontend/dist
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: nutrition-tracker-api
+          envVarKey: RENDER_EXTERNAL_URL
+
+databases:
+  - name: nutrition-tracker-db
+    plan: free
+    databaseName: nutrition_tracker
+    user: nutrition_tracker_user
+
+services:
+  - type: redis
+    name: nutrition-tracker-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru

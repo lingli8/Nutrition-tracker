@@ -1,0 +1,14 @@
+node_modules
+.next
+.env
+.env.local
+.env.*.local
+*.log
+nutrition tracker
+nutrition-tracker-backend
+nutrition-tracker-frontend
+docker-compose.yml
+Dockerfile
+*.md
+!README.md
+!DEPLOY_NOW.md
